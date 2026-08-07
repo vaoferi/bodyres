@@ -1,0 +1,142 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+body {
+    line-height: 1;
+}
+ul {
+    list-style: none;
+}
+blockquote, q {
+    quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    color:#101010;
+}
+
+
+.wrapper {
+    width: 100%;
+    margin: 0 auto;
+}
+img {
+    max-width: 100%;
+    display: block;
+    margin-bottom: 20px;
+}
+h1,h2,h3,h4,h5,h6 {
+    text-transform: capitalize;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
+h1 {
+    font-size: 30px;
+}
+h2 {
+    font-size: 25px;
+}
+h3 {
+    font-size: 20px;
+}
+h4 {
+    font-size: 20px;
+}
+h5 {
+    font-size: 18px;
+}
+h6 {
+    font-size: 16px;
+}
+
+p {
+    margin-bottom: 20px;
+}
+main ul,  main ol {
+    margin: 30px;
+}
+
+aside {
+    width: 200px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background-color: #da7b67;
+    padding: 50px;
+}
+aside img {
+    width: 180px;
+    display: block;
+    margin:  0 auto;
+}
+aside ul {
+    margin-top: 50px;
+}
+aside ul li {
+    margin-bottom: 30px;
+}
+aside ul li a {
+    color: #ffffff;
+    display: inline-block;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all;
+    transition-duration: 0.5s;
+}
+aside ul li a:hover {
+    color: #efa697;
+}
+main  {
+    width: 1000px;
+    margin-left: 300px;
+    padding: 50px;
+}
+
+main section {
+    margin-bottom: 50px;
+}
+
+
+
+
+
+
+
+
+

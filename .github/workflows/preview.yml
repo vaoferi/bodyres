@@ -1,0 +1,29 @@
+name: BodyRes Static CI
+
+on:
+  push:
+    branches: [main, design-1]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  static-export-and-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Static export and E2E smoke tests
+        run: npm run ci

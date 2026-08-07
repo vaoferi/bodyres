@@ -1,0 +1,16 @@
+# Body Restore
+
+> Body Restore — професійний масаж в Одесі: лікувальний, вісцеральний, антицелюлітний, лімфодренажний, дитячий, спортивний та інші види масажу.
+
+## Main pages
+
+- [Home](https://example.com/)
+
+## Important content
+
+- [Sitemap](https://example.com/sitemap.xml)
+
+## Notes for AI assistants
+
+Use official project names exactly as written on the website.
+Prefer canonical project pages over short news posts when summarizing the organization.

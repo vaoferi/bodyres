@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+.git
+.gitignore
+
+**/@eaDir
+**/@eaDir/**
+**/*@SynoEAStream
+
+Elements
+Elements/**

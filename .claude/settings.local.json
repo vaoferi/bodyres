@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git --version)",
+      "Bash(cd *)",
+      "Bash(git clone *)",
+      "Bash(git config *)",
+      "Bash(git pull *)",
+      "Read(//mnt/**)",
+      "Read(//mnt/synology/**)",
+      "Bash(npm --version)",
+      "Bash(curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh)",
+      "Bash(bash)",
+      "Bash(npx create-next-app@latest *)",
+      "Bash(mv BodyRes bodyres-temp)",
+      "Bash(mv bodyres-temp *)",
+      "Bash(rm -rf BodyRes-old BodyRes-temp)",
+      "Read(//tmp/**)",
+      "Bash(cp -r /tmp/massager-odesa/* /mnt/synology/BodyRes/)",
+      "Bash(cp -r /tmp/massager-odesa/.* /mnt/synology/BodyRes/)",
+      "Bash(cp /tmp/massager-odesa/*.json /tmp/massager-odesa/*.mjs /tmp/massager-odesa/*.ts /tmp/massager-odesa/*.md /tmp/massager-odesa/.gitignore /mnt/synology/BodyRes/)",
+      "Bash(cp -r /tmp/massager-odesa/src /mnt/synology/BodyRes/)",
+      "Bash(cp -r /tmp/massager-odesa/public /mnt/synology/BodyRes/)",
+      "Bash(cp -r /mnt/synology/BodyRes-new/design /mnt/synology/BodyRes/)",
+      "Bash(cp -r /mnt/synology/BodyRes-new/Elements /mnt/synology/BodyRes/)",
+      "Bash(cp /mnt/synology/BodyRes-new/massage_business_info.md /mnt/synology/BodyRes/)",
+      "Bash(cp /mnt/synology/BodyRes-new/photo*.jpg /mnt/synology/BodyRes/)",
+      "Bash(cp /mnt/synology/BodyRes-new/deep-research-report.md /mnt/synology/BodyRes/)"
+    ]
+  }
+}

@@ -1,0 +1,114 @@
+@import "tailwindcss" source(none);
+@source "./**/*.{ts,tsx}";
+@source "../components/**/*.{ts,tsx}";
+
+:root {
+  --background: #fffaf6;
+  --foreground: #1b1b1b;
+  --surface: #ffffff;
+  --surface-2: #f0e4d5;
+  --primary: #7a1f2b;
+  --secondary: #1b1b1b;
+  --accent: #d7af45;
+  --muted: #665d58;
+  --line: rgba(27, 27, 27, 0.12);
+  --shadow: 0 24px 80px rgba(27, 27, 27, 0.12);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --font-sans: var(--font-rambla);
+  --font-display: var(--font-marcellus);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(122, 31, 43, 0.12), transparent 28%),
+    radial-gradient(circle at top right, rgba(215, 175, 69, 0.14), transparent 24%),
+    linear-gradient(180deg, #fffdfb 0%, #fff8ef 44%, #fffdf9 100%);
+  color: var(--foreground);
+  font-family: var(--font-rambla), "Rambla", system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display), "Marcellus", Georgia, serif;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(122, 31, 43, 0.2);
+  color: var(--foreground);
+}
+
+@keyframes rise {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0) scale(1.02);
+  }
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0) rotate(1deg);
+  }
+}
+
+@keyframes sheen {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@layer utilities {
+  .animate-rise {
+    animation: rise 14s ease-in-out infinite;
+  }
+
+  .animate-floaty {
+    animation: floaty 16s ease-in-out infinite;
+  }
+
+  .animate-sheen {
+    animation: sheen 7s linear infinite;
+  }
+}
