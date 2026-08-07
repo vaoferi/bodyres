@@ -1571,7 +1571,7 @@ textarea:focus {
    Transform застосовуємо тільки до <video>, бо контейнер фіксує transform
    анімацією появи (fill-mode both) — його transform чіпати не можна. */
 .contact-route-video {
-	box-shadow: 0 12px 36px rgba(15, 23, 42, 0.10);
+	box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
 	transition: box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -1583,9 +1583,9 @@ textarea:focus {
 @media (hover: hover) and (pointer: fine) {
 	.contact-route-video:hover {
 		box-shadow:
-			0 20px 48px rgba(15, 23, 42, 0.18),
-			0 0 0 1px rgba(148, 197, 255, 0.16),
-			0 0 34px rgba(148, 197, 255, 0.12);
+			0 26px 56px rgba(15, 23, 42, 0.26),
+			0 0 0 1px rgba(148, 197, 255, 0.35),
+			0 0 60px rgba(148, 197, 255, 0.35);
 	}
 
 	.contact-route-video:hover video {
