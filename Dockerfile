@@ -6,6 +6,9 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 COPY src ./src
+COPY components ./components
+COPY lib ./lib
+COPY site.config.ts ./
 COPY next.config.ts tsconfig.json ./
 COPY public ./public
 COPY photo_*.jpg ./
