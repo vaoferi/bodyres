@@ -49,3 +49,30 @@ python scripts/deploy-static-ftp.py --notify
 `http://nlmhelp.keenetic.link:18084/` is the documented NAS/container preview when that runtime is available. Preview and production are separate deployment surfaces: updating one does not prove the other is current.
 
 For router/NAS/Vaultwarden/provider access details, read `AGENT_START_HERE.md` and verify current tool/runtime state before acting.
+
+## Hostinger production upload details (verified operational facts)
+
+Canonical upload path: `python scripts/deploy-static-ftp.py`.
+
+- FTP login lands in `/public_html`, but the live vhost `body-re.store` has its own
+  absolute root. `.env.hostinger.local` must therefore point at
+  `HOSTINGER_FTP_REMOTE_DIR=/domains/body-re.store/public_html`; uploading into the
+  FTP login directory alone does not update the live site.
+- Credentials come only from the gitignored `.env.hostinger.local`. Never copy real
+  credentials into Git, docs, issue trackers, chat, `out/` or logs.
+
+After an upload, verify three independent surfaces instead of one:
+
+1. `/.well-known/seo-manifest.json`
+2. the direct template page `/sharp-template/Sharp/index.html`
+3. the root `/`
+
+Hostinger LiteSpeed/edge cache can keep serving an old root after a successful FTP
+upload. In that case use `hPanel → Websites → body-re.store → Cache → Clear cache /
+Purge all`, then repeat the browser smoke test. HTTP 200 on the upload target, or a
+file listing over FTP, is not release evidence without the root browser check.
+
+Cache-busting rule: when template CSS/JS changes, update the query cache-buster for
+that asset in `public/sharp-template/Sharp/index.html`; when the iframe itself
+changes, update the query in `src/app/page.tsx`. This does not replace the edge-cache
+purge above.

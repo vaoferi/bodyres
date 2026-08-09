@@ -165,4 +165,28 @@ test.describe('Body Restore static site smoke', () => {
       /google\.com\/maps\/search/,
     );
   });
+
+  test('mobile review CTA stacks content and uses a fresh responsive stylesheet', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'mobile CTA layout is tested only on mobile viewport');
+
+    await page.goto('/');
+    const frame = await bodyFrame(page);
+    const reviewCta = frame.locator('#review .review-google-cta');
+    const layout = await reviewCta.evaluate((cta) => {
+      const style = window.getComputedStyle(cta);
+      const children = Array.from(cta.children).map((child) => child.getBoundingClientRect().y);
+      return {
+        flexDirection: style.flexDirection,
+        childrenY: children,
+        responsiveHref: Array.from(document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]'))
+          .map((link) => link.href)
+          .find((href) => href.includes('/assets/css/responsive.css')),
+      };
+    });
+
+    expect(layout.flexDirection).toBe('column');
+    expect(layout.childrenY.length).toBeGreaterThanOrEqual(2);
+    expect(new Set(layout.childrenY).size).toBeGreaterThan(1);
+    expect(layout.responsiveHref).toContain('responsive.css?v=20260809-1');
+  });
 });

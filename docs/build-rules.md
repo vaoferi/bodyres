@@ -45,6 +45,8 @@
    - Hostinger production приймає тільки static export у `public_html`.
 35. Якщо потрібен fallback доступ до Synology, використовуй QuickConnect/DSM шлях з Vaultwarden-обліковими даними. Не записуй ці дані в `.env`, docs, git або shell snippets.
 36. На UNC/SMB static build може тривати понад 180 секунд: 2026-07-15 оптимізований build витратив близько 159 секунд ще до запуску test server. `playwright.config.ts` має чекати щонайменше 300 секунд; це тестовий timeout, не production workaround.
+37. Hostinger production має окремий edge/LiteSpeed cache: успішний FTP `STOR` і новий файл у `public_html` ще не доводять, що `https://body-re.store/` вже віддає нову root-сторінку. Після FTP upload обов'язково перевіряй і прямий шаблон, і `/`, а для застарілої root-сторінки виконуй `Clear cache / Purge all` у hPanel для `body-re.store`.
+38. Cache-buster оновлюється на кожному deploy-поверхні окремо: змінений `responsive.css` отримує новий query у `public/sharp-template/Sharp/index.html`, а змінений iframe path — новий query у `src/app/page.tsx`. Не вважай один оновлений `v=...` доказом, що незалежний root cache вже скинутий.
 
 ## Рекомендований порядок
 
@@ -129,7 +131,7 @@
 15. **FTP-деплой має брати тільки `out/`.**
    - `Elements/`, `.env*`, `.git`, `node_modules`, `.next` і `deploy-artifacts/` не є частиною production payload.
    - Якщо треба повторити деплой без Hostinger connector, використовуй `python scripts/deploy-static-ftp.py`; він завантажує зібраний static export у `public_html`.
-   - Для поточного FTP-акаунта правильний remote dir: `domains/body-re.store/public_html`, а не голий `public_html`.
+   - FTP login стартує в `/public_html`, але живий vhost має абсолютний root `/domains/body-re.store/public_html`. Шлях без початкового `/` шукається від `/public_html` і дає `550 No such file or directory`.
 
 16. **Hostinger FTP може обірвати upload під час `STOR`.**
    - Симптом: `ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host`.
@@ -159,6 +161,11 @@
    - Якщо картка показує опис на hover, вона також має відкривати той самий опис на tap/click/keyboard без переходу на `#`.
    - Тест для цього сценарію живе в `tests/e2e/bodyres-smoke.spec.ts`.
 
+21. **Hostinger edge cache може приховувати успішний FTP-деплой.**
+   - У попередньому розборі FTP завантажив 230 файлів без помилок, а прямий `sharp-template/Sharp/index.html` уже містив нову адресу та відео.
+   - Root `/` ще віддавав старий iframe `v=20260804-2`, тому браузер показував стару композицію і старі тексти.
+   - Після кожного production upload перевіряй `/.well-known/seo-manifest.json`, прямий шаблон і root у браузері; якщо root не змінився — purge у hPanel є обов'язковим кроком, а не підставою повторно переписувати UI.
+
 ## Деплой-підготовка
 
 Перед наступним запуском перевір:
@@ -183,7 +190,7 @@
    - перевірка `.deployignore`.
 3. FTP-деплой виконується через `python scripts/deploy-static-ftp.py`.
 4. Якщо Hostinger connector бачить домен, можна використовувати static website deploy з архівом `out/`; якщо connector не бачить домен, fallback — FTP.
-5. Для поточного FTP-акаунта корінь сайту: `domains/body-re.store/public_html`.
+5. Для поточного FTP-акаунта `PWD` після login — `/public_html`, а root live domain — `/domains/body-re.store/public_html`; у `.env.hostinger.local` вказуй абсолютний `HOSTINGER_FTP_REMOTE_DIR=/domains/body-re.store/public_html`.
 6. Не деплоїти `node_modules`, `.next`, `.git`, `Elements`, `deploy-artifacts`, `.env*`.
 7. Якщо треба максимально безпечний cutover для великої зміни:
    - завантажити `out/` у тимчасову теку поряд з `public_html`;
