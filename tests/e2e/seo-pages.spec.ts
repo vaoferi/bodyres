@@ -51,9 +51,13 @@ for (const [slug, heading] of services) {
       "href",
       `https://body-re.store/services/${slug}/`,
     );
-    const serviceSchema = await page.locator("script[type='application/ld+json']").evaluate(
-      (element) => JSON.parse(element.innerHTML),
+
+    const jsonLdSchemas = await page.locator("script[type='application/ld+json']").evaluateAll((elements) =>
+      elements.map((element) => JSON.parse(element.textContent || "{}")),
     );
+    const serviceSchema = jsonLdSchemas.find((schema) => schema?.["@type"] === "Service");
+
+    expect(serviceSchema, "service page must expose a Service JSON-LD schema").toBeTruthy();
     expect(serviceSchema).toMatchObject({
       "@type": "Service",
       name: heading,
