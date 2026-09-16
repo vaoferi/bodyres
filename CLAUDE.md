@@ -1,63 +1,17 @@
-# CLAUDE.md — BodyRes Project
+# CLAUDE.md — BodyRes provider overlay
 
-## 🏋️ Про проект
+Цей файл не дублює universal/project rules.
 
-**BodyRes** — Next.js веб-сайт для масажного бізнесу в Одесі.
+Перед роботою:
 
-### Бізнес-контекст
-- Послуги: лікувальний масаж, вісцеральний, антицелюлітний, лімфодренажний, медовий, дитячий, масаж обличчя, для вагітних, спортивний, вогняний
-- Адреса: Одеса, Фонтанська дорога, 58/3
-- Телефон: 096 859 24 65
-- Цільова аудиторія: люди, які хочуть покращити здоров'я та самопочуття
-- Формат: лендінг + кабінет клієнта
+1. прочитай root `AGENTS.md`;
+2. прочитай `PROJECT_RULES.md`;
+3. завантаж релевантний local Vaoferi skill за routing у `AGENTS.md`.
 
----
+## Claude-specific
 
-## 🔧 Робочий процес
+- `.claude/settings.local.json`, якщо він існує у поточному workspace, є machine/provider permission overlay, а не source of truth для архітектури або поведінки BodyRes.
+- Не переносити machine-specific Bash/Read allowlist з `.claude/settings.local.json` у `AGENTS.md`, `PROJECT_RULES.md` або інші universal docs.
+- Якщо локальний permission/tool недоступний у поточній Claude session, спочатку перевір current capability/config. Не переписуй project architecture лише через session-level відсутність tool.
 
-### Маленька безпечна задача
-1. Зрозумій задачу
-2. Знайди пов'язаний файл
-3. Зроби мінімальну зміну
-4. Перевір результат
-
-### Серйозна задача
-1. Context Load — прочитай PROJECT_RULES.md
-2. Plan — склади план в SPEC.md
-3. Знайди логіку
-4. Мінімальна зміна
-5. Перевірка
-
----
-
-## 📐 Архітектура
-
-```
-app/
-├── (marketing)/    # Лендінг, програми, CTA
-├── (dashboard)/    # Кабінет клієнта
-└── api/           # API routes
-```
-
----
-
-## 🎨 UI / Дизайн
-
-**Дизайн-донори:** `/Elements/` — бібліотека готових компонентів
-- Не копіювати шаблони цілком
-- Використовувати як донор для окремих блоків/CSS
-
-**Стек:**
-- Next.js 14+ (App Router)
-- Tailwind CSS
-- shadcn/ui компоненти
-- Mobile First (320px+)
-
----
-
-## ✅ Definition of Done
-
-- Візуальна перевірка у браузері
-- HTTP 200 ≠ готово
-- Перевірка адаптиву (320px → 1920px)
-- Без mojibake
+BodyRes business/content facts живуть у `massage_business_info.md`; build/deploy/design facts — у `PROJECT_RULES.md`, `README.md`, `docs/architecture-decisions.md` і `docs/build-rules.md`.

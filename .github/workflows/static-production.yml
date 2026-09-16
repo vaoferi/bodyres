@@ -1,9 +1,6 @@
 name: Deploy BodyRes static production
 
 on:
-  push:
-    branches:
-      - design-1
   workflow_dispatch:
 
 concurrency:

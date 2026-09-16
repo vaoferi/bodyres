@@ -1,82 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BodyRes
 
-## Deployment mode
+BodyRes is a Next.js site for a massage business in Odesa. The repository currently targets **Next.js static export** for production and publishes plain HTML/CSS/JS to Hostinger.
 
-BodyRes is documented to target `STATIC EXPORT` as the default deployment mode.
+## Start here
 
-- Static export means plain HTML/CSS/JS files.
-- Use it when you want the site to run on cheaper shared hosting without a dedicated Node.js server.
-- Avoid `SSR / API` for the public site unless there is a concrete requirement that cannot be solved statically.
+For agent work read, in order:
 
-## Documentation map
+1. `AGENTS.md` — universal Vaoferi contract;
+2. `PROJECT_RULES.md` — BodyRes-specific architecture, design, build and deploy invariants;
+3. `docs/architecture-decisions.md` — durable architecture decisions;
+4. `docs/build-rules.md` — verified build/runtime quirks;
+5. `massage_business_info.md` — business/content source.
 
-- `docs/architecture-decisions.md` — ключові архітектурні рішення та що не можна ламати.
-- `docs/build-rules.md` — правила збірки, перевірки та типові блокери середовища.
+`AGENT_START_HERE.md` is only for router/NAS/Hostinger/Vaultwarden/MCP operational tasks. `CLAUDE.md` is a thin provider overlay.
 
-## Getting Started
+## Current stack
 
-First, run the development server:
+Exact versions live in `package.json`. Current baseline uses Next.js 16.2.9 / React 19.2.4 / TypeScript / Tailwind CSS 4, with Playwright for browser verification.
+
+For version-sensitive Next.js behavior, use documentation for the installed version rather than older framework assumptions.
+
+## Development
 
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Local development may use `http://localhost:3000`; it is not production acceptance evidence.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Production mode: STATIC EXPORT
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The public site is intended to run without a dedicated Node.js server.
 
-## Learn More
+`NEXT_OUTPUT=export` makes `next.config.ts` produce the `out/` directory with static HTML/CSS/JS. Do not introduce SSR/API/server-only requirements without a separate architecture decision.
 
-To learn more about Next.js, take a look at the following resources:
+Canonical production checks:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Static indexation and notification flow
-
-`npm run build:static` creates the production `out/` directory and, after Next.js finishes, writes:
-
-- `/robots.txt`, `/sitemap.xml`, `/llms.txt` and `/feed.xml`;
-- `/.well-known/seo-manifest.json` with SHA-256 page state;
-- `/<INDEXNOW_KEY>.txt` for IndexNow verification.
-
-The manifest retains `lastmod` for an unchanged page. Only added and changed live URLs are verified and submitted after deployment; removed URLs are recorded but never requested as if they were still live.
-
-### Safe production release
-
-```text
+```bash
 npm run test:seo
 npm run build:static
+npm run ci
+```
+
+Production deployment, only when explicitly authorized:
+
+```bash
 python scripts/deploy-static-ftp.py --notify
 ```
 
-`--notify` first waits until the production manifest has the local build ID. Only then does it call IndexNow, Google Search Console Sitemap API, Ping-O-Matic, Twingly and optionally WebSub/Telegram. A verification or configured critical service failure returns a non-zero exit code; legacy XML-RPC failure remains visible in the report but does not undo an already successful file upload.
+The script uploads the reviewed static export to Hostinger, verifies the production manifest/build state, then runs configured notification/indexing steps. A successful upload alone is not the release acceptance gate; verify the live site afterwards.
 
-The local report is `.seo/notification-report.json`. It is deliberately ignored by Git.
+## Static indexation and notification flow
 
-### Optional environment settings
+`npm run build:static` generates the production `out/` directory and writes/updates:
 
-Use `.env.hostinger.example` as the non-secret field list. Real values belong only in `.env.hostinger.local` or GitHub Actions secrets:
+- `/robots.txt`, `/sitemap.xml`, `/llms.txt`, `/feed.xml`;
+- `/.well-known/seo-manifest.json` with page SHA-256 state;
+- `/<INDEXNOW_KEY>.txt` when IndexNow verification is configured.
 
-- `INDEXNOW_KEY` — optional; when absent, a persistent local key is generated in `.seo/`.
-- `GOOGLE_SEARCH_CONSOLE_SITE_URL` and `GOOGLE_SERVICE_ACCOUNT_JSON` — enable sitemap submission. The service account must have access to `sc-domain:body-re.store`.
-- `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` — enable release summaries.
-- `WEBSUB_ENABLED=true` — enables WebSub only when a real hub is configured.
+The manifest keeps `lastmod` stable for unchanged pages. Only added/changed live URLs are notified after deployment; deleted URLs are recorded but are not requested as if still live.
 
-Do not use Google Indexing API for ordinary site pages: it is not the supported API for this purpose.
+For this project's `trailingSlash` static model, exported `.../index.html` pages are represented externally as slash URLs. `/sharp-template/Sharp/` is an internal iframe/template surface and must not become a separate sitemap/feed/manifest page.
 
-## Deploy on Vercel
+Do not use Google Indexing API for ordinary site pages; the project uses the supported sitemap/Search Console path where configured.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Secrets/config
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Use `.env.hostinger.example` only as the non-secret field list. Real values belong in gitignored `.env.hostinger.local` or GitHub Actions secrets.
+
+Examples of optional integration settings include IndexNow, Google Search Console, Telegram release summaries and WebSub. Never commit or paste real credential values into repository documentation.
+
+## GitHub Actions
+
+- `.github/workflows/preview.yml` — PR/main static export + Playwright smoke CI.
+- `.github/workflows/vaoferi-start-here.yml` — canonical Start Here contract/drift verification.
+- `.github/workflows/static-production.yml` — explicitly manual Hostinger production deployment. Do not enable an automatic production trigger without owner approval.
+
+GitHub Pages is not the canonical production target for BodyRes.

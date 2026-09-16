@@ -1,79 +1,51 @@
-# BodyRes — Дизайн 1 (SPA-мінімалізм)
+# BodyRes — production deploy runbook
 
-## Режим Next.js
+Current production architecture is **STATIC EXPORT → Hostinger static hosting**. This file is a short operational runbook; architecture authority is `docs/architecture-decisions.md`, and build/runtime quirks live in `docs/build-rules.md`.
 
-Для BodyRes цільовий режим розгортання - `STATIC EXPORT`.
+## Production contract
 
-- Це означає готові `HTML/CSS/JS` файли без окремого `Node.js` сервера.
-- Для публічного хостингу не використовуємо `SSR / API`, якщо немає окремої технічної причини.
-- Якщо хостинг не вимагає серверної логіки, обираємо саме статичну збірку, щоб не переплачувати за інфраструктуру.
-- Docker-режим у цьому проєкті лишається лише як технічний preview/deploy шлях для поточного середовища, а не як цільова продакшен-архітектура.
+- Production output: `out/`.
+- Public production does not require a persistent Node.js server.
+- Do not introduce SSR/API/server-only Next.js features without a separate approved architecture decision.
+- Canonical production upload path is `scripts/deploy-static-ftp.py` using protected Hostinger configuration/secrets.
+- GitHub Pages is not the canonical production target.
 
-## Статус виконання
+## Before deploy
 
-### ✅ Зроблено:
-- 6 компонентів: Hero, Services, Benefits, Testimonials, CTA, Contacts
-- SPA-кольори: mint #A8D5BA, powder #F5E6E0, terracotta #D4A574
-- Шрифти: Cormorant Garamond, Nunito Sans, Playfair Display
-- Next.js build працює
-- Dockerfile + docker-compose.yml створені
-- GitHub repo: https://github.com/vaoferi/bodyres (гілка design-1)
-- Vaultwarden: збережено креденшали роутера
+A production deployment requires explicit authorization for the current change.
 
-### ❌ Потрібна допомога:
-1. **GitHub push** — HTTP 408 (мережева проблема)
-2. **Docker** — потрібен sudo або пароль від роутера 192.168.2.1
-3. **SSH до NAS** — пароль невідомий
+Run the current project gates:
 
-## Креденшали
-
-### Vaultwarden
-- Host: nlmhelp.keenetic.link:18088
-- Email: vaoferi@gmail.com
-- Password: не зберігати в git; використовувати `.env.hostinger.local` або Vaultwarden
-
-### Роутер Keenetic
-- Local IP: 192.168.2.1
-- Admin URL: http://192.168.2.1
-- DDNS: vaoferi.keenetic.pro
-- SSH: port 2222
-- Пароль: **невідомо**
-
-### Synology NAS
-- IP: 10.0.1.12
-- SSH: port 2222 (через роутер)
-- Порти: 80, 443, 5000, 5001, 8920
-
-## Для запуску контейнера
-
-> Цей шлях потрібен для поточного preview/живого перегляду. Для фінального публічного розгортання пріоритет має `STATIC EXPORT`.
-
-### Варіант 1: Docker на цьому ПК
 ```bash
-sudo apt install docker.io docker-compose
-cd /mnt/synology/BodyRes
-docker-compose up -d
+npm ci
+npm run test:seo
+npm run build:static
+npm run ci
 ```
 
-### Варіант 2: Відкрити порт на роутері
-1. Зайти на http://192.168.2.1
-2. Відкрити порт 3000 на зовнішню мережу
-3. Потім запустити контейнер
+Then inspect the resulting diff/output and only after green gates run:
 
-### Варіант 3: Хмарний деплой
 ```bash
-# Railway
-railway login && railway init && railway up
-
-# Render
-render deploy
-
-# Fly.io
-fly launch && fly deploy
+python scripts/deploy-static-ftp.py --notify
 ```
 
-## Файли проекту
-- `/mnt/synology/BodyRes/src/components/` — компоненти
-- `/mnt/synology/BodyRes/Dockerfile` — Docker образ
-- `/mnt/synology/BodyRes/docker-compose.yml` — Docker Compose
-- `/mnt/synology/BodyRes/deploy.sh` — скрипт деплою
+`--notify` must wait for the production manifest/build ID before external index notifications. A successful file upload is not enough to call the release complete; verify the live production surface afterwards.
+
+## Secrets
+
+- Local Hostinger config/secrets: gitignored `.env.hostinger.local`.
+- CI deploy credentials: GitHub Actions secrets.
+- `.env.hostinger.example` contains only non-secret field names/examples.
+- Never copy real credentials into Git, docs, issue trackers, chat or logs.
+
+## GitHub Actions
+
+- `.github/workflows/preview.yml` owns static-export/E2E CI for pushes/PRs.
+- `.github/workflows/static-production.yml` is the Hostinger production workflow and must remain explicitly controlled; do not create or enable a new automatic production trigger without owner approval.
+- Any legacy GitHub Pages/example-domain workflow is not a production source of truth.
+
+## NAS preview
+
+`http://nlmhelp.keenetic.link:18084/` is the documented NAS/container preview when that runtime is available. Preview and production are separate deployment surfaces: updating one does not prove the other is current.
+
+For router/NAS/Vaultwarden/provider access details, read `AGENT_START_HERE.md` and verify current tool/runtime state before acting.
