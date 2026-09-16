@@ -1,5 +1,7 @@
 # SPEC.md — BodyRes Sharp Main File one-page
 
+> **Status: RETIRED / HISTORICAL.** The Sharp one-page direction is already represented by the current implementation (`src/app/page.tsx` → `public/sharp-template/Sharp/`) and current project rules/docs. Do not use this file as an active execution plan. Current code/config/tests plus `PROJECT_RULES.md`, `docs/architecture-decisions.md`, `docs/build-rules.md` and `massage_business_info.md` are the active sources.
+
 ## Ціль
 Перевести BodyRes на класичний one-page у стилі `design-7-sharp-main-file.md`, але з реальним контентом BodyRes замість демо-даних. Окремо прибрати QR-постери з основного UI і показати соціальні канали через іконки та текстові лінки.
 
