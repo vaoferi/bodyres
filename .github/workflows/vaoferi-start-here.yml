@@ -1,0 +1,14 @@
+name: Vaoferi Start Here
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  start-here:
+    uses: vaoferi/vaoferi-start-here/.github/workflows/vaoferi-checks.yml@f73b116bed76d2c543d2d678964e5ad818ea0931
