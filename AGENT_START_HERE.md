@@ -22,6 +22,8 @@ Tool/provider topology є version- і session-sensitive. Перед зміною
 
 Документований BodyRes preview: `http://nlmhelp.keenetic.link:18084/`.
 
+Остання зафіксована project mapping була `18084/TCP -> 10.0.1.12:8080`. Це корисний locator, але перед network/router mutation перевір current running config: mapping могла змінитися після дати запису.
+
 Ролі не змішувати:
 
 - router — external access / port forwarding;
@@ -30,9 +32,22 @@ Tool/provider topology є version- і session-sensitive. Перед зміною
 
 Якщо preview не показує свіжі файли, спочатку встанови, який runtime/container реально віддає endpoint, а не переписуй UI повторно.
 
+Для fallback доступу до Synology historical project path використовував QuickConnect/DSM. Якщо він знову потрібний, перевір current availability і бери credentials з approved secret source; не записуй їх у docs або shell snippets.
+
 ## Vaultwarden / Bitwarden
 
+Historical canonical Vaultwarden endpoint у project notes: `https://vault.nlm.help`. Перед використанням перевір, що endpoint і certificate chain зараз валідні.
+
 Vaultwarden — optional operational credential source для router/NAS/Hostinger, коли він реально доступний і це потрібно задачі. Не роби його обов'язковим замість working gitignored local env.
+
+Корисні record names, які були зафіксовані для пошуку без повторного запиту секретів у owner:
+
+- `NLM Keenetic Router - nlmhelp.keenetic.link`;
+- `NLM Synology NAS - QuickConnect/DSM`;
+- `BodyRes Hostinger - FTP/API`;
+- `BodyRes Hostinger API token`.
+
+Назва record не доводить, що він досі існує або актуальний: перед використанням перевір current credential store.
 
 - Не проси owner повторно надсилати secret у chat, якщо approved local store або доступний credential manager уже містить потрібний запис.
 - Не вважай помилку конкретного CLI/MCP автоматично проблемою самого Vaultwarden: перевір client/tool availability окремо.
@@ -44,6 +59,8 @@ Historical machine-specific CLI paths, certificate errors та одноразо�
 ## Headroom / MCP
 
 Historical local proxy convention був `http://127.0.0.1:9090/<namespace>/`. Не вважай його гарантовано чинним.
+
+Раніше через нього були зафіксовані Hostinger namespaces: `hostinger-api`, `hostinger-hosting`, `hostinger-domains`, `hostinger-dns`, `hostinger-billing`, `hostinger-reach`. Це discovery hints, не гарантований current tool list.
 
 Перед використанням Hostinger/MCP namespace:
 
