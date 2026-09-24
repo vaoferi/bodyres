@@ -85,7 +85,8 @@ UI Done вимагає browser/render evidence; HTTP 200 або build alone не
   - router — external access/port forwarding;
   - Synology/NAS — preview/container runtime;
   - Hostinger — production static files.
-- Не вважай локальний `localhost:3000` production evidence. Для development він допустимий.
+- Не вважай локальний `localhost:3000` production evidence.
+- Development runtime на цій машині не підтримується: DEV/HMR, build і gates виконуються на canonical NAS checkout через `projectctl` (`dev ensure bodyres`, `preview refresh bodyres`), а стабільний preview лишається `http://nlmhelp.keenetic.link:18084/`.
 
 ## 9. Deploy
 

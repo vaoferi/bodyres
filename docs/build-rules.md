@@ -55,7 +55,7 @@
 2. npm run build
 3. npm run build:static
 4. npm run ci
-5. якщо Turbopack скаржиться на UNC/root path, запускати build з mapped drive (`X:\`) або з локального клону, не з голого UNC через `cmd.exe`
+5. build і DEV виконуються на NAS Linux (canonical checkout), тому UNC/mapped-drive обходи `X:\` та локального клону більше не потрібні й не є підтримуваним шляхом; якщо інструмент скаржиться на шлях — це дефект NAS-адаптера, який фіксується, а не обходитьться локальным запуском
 6. перевірити diff і visual QA
 ```
 
@@ -183,7 +183,7 @@
 ### Static deploy на звичайний Hostinger
 
 1. Production payload — тільки вміст `out/`.
-2. Перед deploy обов’язково:
+2. Перед deploy обов’язково (усі gates — на canonical NAS checkout, не на робочій станції):
    - `npm install`;
    - `npm run ci`;
    - перевірка secret-scan без `.env.hostinger.local`;

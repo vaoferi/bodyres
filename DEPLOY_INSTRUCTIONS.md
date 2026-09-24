@@ -14,7 +14,7 @@ Current production architecture is **STATIC EXPORT → Hostinger static hosting*
 
 A production deployment requires explicit authorization for the current change.
 
-Run the current project gates:
+Run the current project gates **on the canonical Synology NAS checkout** (a workstation is an editor and a control client, not a build host). Through SSH from the NAS:
 
 ```bash
 npm ci

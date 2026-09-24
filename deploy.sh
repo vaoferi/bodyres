@@ -1,50 +1,17 @@
-#!/bin/bash
-# Deploy script for BodyRes landing page
-# Usage: ./deploy.sh [railway|render|fly|local]
+#!/bin/sh
+# Retired as a runtime entrypoint (NLM-101): BodyRes has exactly one development/build
+# path (NAS Linux through projectctl) and one production path (static export upload).
+# The previous railway/render/fly/local-Docker modes described a second, competing
+# runtime architecture that this project no longer supports.
+set -u
 
-set -e
-
-DEPLOY_MODE=${1:-local}
-
-echo "🚀 Deploying BodyRes..."
-
-case $DEPLOY_MODE in
-  railway)
-    echo "📦 Deploying to Railway..."
-    railway login
-    railway init
-    railway up
-    railway domain
-    ;;
-
-  render)
-    echo "📦 Deploying to Render..."
-    render deploy --service=$(basename $PWD)
-    ;;
-
-  fly)
-    echo "📦 Deploying to Fly.io..."
-    fly launch
-    fly deploy
-    fly status
-    ;;
-
-  local)
-    echo "🏠 Building for local preview..."
-    docker build -t bodyres:latest .
-    docker run -p 3000:3000 --rm bodyres:latest
-    ;;
-
-  docker-compose)
-    echo "🐳 Starting with docker-compose..."
-    docker-compose up -d
-    docker-compose logs -f
-    ;;
-
-  *)
-    echo "Usage: ./deploy.sh [railway|render|fly|local|docker-compose]"
-    exit 1
-    ;;
-esac
-
-echo "✅ Deploy complete!"
+printf '%s\n' 'deploy.sh no longer runs a local or PaaS deployment.'
+printf '%s\n'
+printf '%s\n' 'Canonical operations for BodyRes:'
+printf '%s\n' '  ssh synology-dev'
+printf '%s\n' '  projectctl dev ensure bodyres | dev status bodyres | dev stop bodyres'
+printf '%s\n' '  projectctl preview refresh bodyres      # rebuilds the durable NAS preview artifact'
+printf '%s\n' '  python scripts/deploy-static-ftp.py     # production: static export to Hostinger (manual, owner-approved)'
+printf '%s\n'
+printf '%s\n' 'Run projectctl doctor bodyres and projectctl preview status bodyres for verified state.'
+exit 2

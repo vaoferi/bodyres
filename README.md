@@ -22,12 +22,27 @@ For version-sensitive Next.js behavior, use documentation for the installed vers
 
 ## Development
 
-```bash
-npm ci
-npm run dev
+Development, build and browser verification run on the canonical Synology NAS
+checkout. A workstation is an editor and a control client, not a runtime host.
+
+```sh
+ssh synology-dev
+/usr/local/bin/projectctl dev ensure bodyres    # NAS Next DEV, switched onto the stable route only after its healthcheck passes
+/usr/local/bin/projectctl dev status bodyres
+/usr/local/bin/projectctl dev stop bodyres      # returns the stable route to the permanent preview first, then stops DEV
 ```
 
-Local development may use `http://localhost:3000`; it is not production acceptance evidence.
+The durable customer preview stays on the unchanged stable URL
+`http://nlmhelp.keenetic.link:18084/`. The raw DEV port is internal to the NAS and is
+never the public URL. To rebuild the permanent preview artifact on the NAS:
+
+```sh
+/usr/local/bin/projectctl preview refresh bodyres
+```
+
+`npm ci`, `npm run dev` and a `localhost:3000` page are not the supported development
+flow for this project, and localhost output is not acceptance evidence for preview or
+production.
 
 ## Production mode: STATIC EXPORT
 
