@@ -1,0 +1,22 @@
+# The repository has always stored LF. Without this rule a file edited on a
+# Windows client reads as modified forever, because only its line endings moved.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.avif binary
+*.mp4 binary
+*.mov binary
+*.ogg binary
+*.mp3 binary
+*.pdf binary
+*.ai binary
+*.psd binary
+*.zip binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
