@@ -31,7 +31,7 @@
 23. FTP-деплой на Hostinger виконуй тільки після зеленого `npm run ci` командою `python scripts/deploy-static-ftp.py`. Скрипт читає секрети з `.env.hostinger.local`, не з коду і не з git.
 24. Якщо користувач прямо каже “не роби збірку” або “спочатку виконай ще задачі в черзі”, не запускай `npm run ci`, `npm run test:e2e` без `BODYRES_TEST_URL`, `scripts/e2e-static-server.mjs` або `npm run build:static`: усі ці шляхи можуть зібрати `out/`. У такому режимі дозволені тільки статичні перевірки (`git diff --check`, scoped lint, пошук mojibake, HTML-count checks), доки користувач не дозволить build.
 25. `scripts/e2e-static-server.mjs` завжди запускає `scripts/build-static.mjs` перед стартом тестового сервера. Це корисно для CI, але не підходить для черги правок “без збірки”.
-26. На Windows з UNC-шляху команди через `cmd.exe` можуть стартувати з `C:\Windows`, навіть якщо `workdir` задано правильно. Для npm/node-команд використовуй `cmd /c "pushd \\nas\homes\vaoferi\Work\BodyRes && <command> && popd"` або mapped drive.
+26. npm/node/Playwright команди виконуються на canonical NAS checkout (Linux) через `ssh synology-dev` і `projectctl`, а не з робочої станції. Історичний обхід `cmd /c "pushd \\nas\homes\vaoferi\Work\BodyRes && <command> && popd"` для Windows-UNC більше не є підтримуваним шляхом: проблема виникала саме через запуск build на станції, а на NAS її немає.
 27. Загальний `npm run lint` зараз лінтить також донорські `Elements/` і `skills-repos/`, тому може падати на сторонніх/minified JS незалежно від поточної правки. Для локальної перевірки маленької зміни використовуй scoped lint, наприклад `npx eslint tests/e2e/bodyres-smoke.spec.ts public/sharp-template/Sharp/assets/js/main.js`, а окремо треба винести донорські теки в ignore/config cleanup.
 28. Якщо змінено CSS/JS у `public/sharp-template/Sharp/assets/`, оновлюй cache-buster саме для відповідного файлу в `public/sharp-template/Sharp/index.html`: `style.css?v=...`, `responsive.css?v=...`, `main.js?v=...`. Якщо змінено root iframe path — окремо оновлюй `src/app/page.tsx`.
 29. Для сервісних карток не використовувати fake-link `href="#"` тільки заради клікабельності. Поточний патерн: `.single-services-item` отримує `role="button"`, `tabindex="0"`, `aria-expanded`, а текст відкривається класом `.is-touch-open` на tap/keyboard; desktop hover лишається тим самим.
@@ -55,7 +55,7 @@
 2. npm run build
 3. npm run build:static
 4. npm run ci
-5. build і DEV виконуються на NAS Linux (canonical checkout), тому UNC/mapped-drive обходи `X:\` та локального клону більше не потрібні й не є підтримуваним шляхом; якщо інструмент скаржиться на шлях — це дефект NAS-адаптера, який фіксується, а не обходитьться локальным запуском
+5. build і DEV виконуються на NAS Linux (canonical checkout), тому UNC/mapped-drive обходи `X:\` та локального клону більше не потрібні й не є підтримуваним шляхом; якщо інструмент скаржиться на шлях — це дефект NAS-адаптера, який фіксується, а не обходитьться локальним запуском
 6. перевірити diff і visual QA
 ```
 
@@ -222,9 +222,9 @@
    - `Elements/`;
    - `node_modules/`;
    - `.next/`.
-4. Windows/Linux:
-   - на Windows запускати з mapped drive (`X:\`) або локального шляху, не з UNC через `cmd.exe`;
-   - на Linux/NAS запускати з реального шляху проєкту;
+4. Де запускати:
+   - build, DEV, gates і тестові прогони — тільки на Linux/NAS, з реального шляху canonical checkout (`/volume1/homes/vaoferi/Work/BodyRes`);
+   - робоча станція (Windows чи macOS) не є хостом для жодного з цих кроків; для неї призначені лише редагування файлів, SSH-контроль і браузерна перевірка;
    - для env-перемінних не додавати shell-specific one-liner у `package.json`; використовувати Node/Python scripts.
 
 ## Пов’язані файли
