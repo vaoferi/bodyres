@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Прайс-лист — Body Restore</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 210mm; height: 297mm;
+    font-family: 'Marcellus', 'Georgia', serif;
+    background: #fdfcfa;
+    color: #2c241b;
+    overflow: hidden;
+    position: relative;
+  }
+  .bg-photo {
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 42%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0.14;
+  }
+  .bg-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #faf8f4 0%, #f5f0e8 100%);
+  }
+  .content {
+    position: relative;
+    padding: 18mm 20mm 16mm 20mm;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 6mm;
+    margin-bottom: 8mm;
+    padding-bottom: 6mm;
+    border-bottom: 1px solid #d4c9b8;
+  }
+  .logo { width: 34mm; height: auto; flex-shrink: 0; }
+  .brand h1 {
+    font-size: 13mm;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: #3a2f23;
+    line-height: 1.1;
+  }
+  .brand p {
+    font-family: 'Rambla', sans-serif;
+    font-size: 4mm;
+    color: #8a7a63;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 1mm;
+  }
+  .price-table {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .price-row {
+    display: flex;
+    align-items: baseline;
+    padding: 4.5mm 0;
+    border-bottom: 1px dashed #e0d6c4;
+  }
+  .price-row:last-child { border-bottom: none; }
+  .service-name {
+    flex: 1;
+    font-size: 5.2mm;
+    font-weight: 400;
+    color: #3a2f23;
+    padding-right: 4mm;
+  }
+  .service-dur {
+    font-family: 'Rambla', sans-serif;
+    font-size: 4mm;
+    color: #9a8a75;
+    white-space: nowrap;
+    margin-right: 5mm;
+  }
+  .service-price {
+    font-size: 6.5mm;
+    font-weight: 400;
+    color: #6b5637;
+    white-space: nowrap;
+    min-width: 22mm;
+    text-align: right;
+  }
+  .currency {
+    font-family: 'Rambla', sans-serif;
+    font-size: 4mm;
+    color: #9a8a75;
+    margin-left: 1mm;
+  }
+  .footer {
+    margin-top: auto;
+    padding-top: 6mm;
+    border-top: 1px solid #d4c9b8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-contact {
+    font-family: 'Rambla', sans-serif;
+    font-size: 4.2mm;
+    color: #5a4a35;
+    line-height: 1.6;
+  }
+  .footer-note {
+    font-family: 'Rambla', sans-serif;
+    font-size: 3.6mm;
+    color: #a09080;
+    font-style: italic;
+    max-width: 90mm;
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+  <img class="bg-photo" src="price-photo.jpg" alt="">
+  <div class="bg-overlay"></div>
+  <div class="content">
+    <div class="header">
+      <img class="logo" src="BR_logo_clean_highdetail.svg" alt="Body Restore">
+      <div class="brand">
+        <h1>Body Restore</h1>
+        <p>Масаж · Відновлення · Догляд</p>
+      </div>
+    </div>
+    <div class="price-table">
+      <div class="price-row">
+        <span class="service-name">Лікувальний масаж спини</span>
+        <span class="service-dur">60 хв</span>
+        <span class="service-price">1 200 <span class="currency">грн</span></span>
+      </div>
+      <div class="price-row">
+        <span class="service-name">Лімфодренажний загальний</span>
+        <span class="service-dur">60 хв</span>
+        <span class="service-price">1 200 <span class="currency">грн</span></span>
+      </div>
+      <div class="price-row">
+        <span class="service-name">Антицелюлітний</span>
+        <span class="service-dur">60 хв</span>
+        <span class="service-price">1 500 <span class="currency">грн</span></span>
+      </div>
+      <div class="price-row">
+        <span class="service-name">Спортивний</span>
+        <span class="service-dur">60 хв</span>
+        <span class="service-price">1 400 <span class="currency">грн</span></span>
+      </div>
+      <div class="price-row">
+        <span class="service-name">Медовий</span>
+        <span class="service-dur">30 хв</span>
+        <span class="service-price">750 <span class="currency">грн</span></span>
+      </div>
+      <div class="price-row">
+        <span class="service-name">Вісцеральний масаж живота</span>
+        <span class="service-dur">30 хв</span>
+        <span class="service-price">750 <span class="currency">грн</span></span>
+      </div>
+      <div class="price-row">
+        <span class="service-name">Дитячий масаж</span>
+        <span class="service-dur">30 хв</span>
+        <span class="service-price">600 <span class="currency">грн</span></span>
+      </div>
+      <div class="price-row">
+        <span class="service-name">Глибинний масаж обличчя</span>
+        <span class="service-dur">60 хв</span>
+        <span class="service-price">1 200 <span class="currency">грн</span></span>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer-contact">
+        096 859 24 65<br>
+        вул. Івана Фунтового, 68/1, Одеса<br>
+        book@body-re.store
+      </div>
+      <div class="footer-note">
+        Ціни актуальні на момент друку.<br>
+        Можливий виїзд додому за домовленістю.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
