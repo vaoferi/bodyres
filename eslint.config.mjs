@@ -24,6 +24,13 @@ const eslintConfig = defineConfig([
     "public/sharp-template/**",
     "test-results/**",
     "deploy-artifacts/**",
+    // Build output, a vendored third-party skills clone, and macOS AppleDouble
+    // sidecars are gitignored working state, not source; linting them produced
+    // 55 errors in minified bundles and hid real findings in src/.
+    "dist/**",
+    "deploy/**/out/**",
+    "skills-repos/**",
+    "**/._*",
   ]),
 ]);
 
