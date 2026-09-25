@@ -57,3 +57,12 @@ next-env.d.ts
 test-results/
 .mimocode/
 
+# Synology DSM writes thumbnail/extension sidecars next to every media file on
+# this share, and macOS writes resource forks through the WebDAV mount. Neither
+# is repository content and both are recreated by the file service, so they are
+# ignored by name rather than deleted: `@eaDir/`, `._*`, `.DS_Store`.
+@eaDir/
+._*
+.DS_Store
+
+
