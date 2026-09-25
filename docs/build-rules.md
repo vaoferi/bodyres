@@ -7,21 +7,21 @@
 
 1. Публічний сайт залишається статичним. Не переводити його на `SSR / API`, якщо немає окремого рішення.
 2. Перед build перевіряй, що `node_modules` повний. Якщо `lightningcss` або інший нативний пакет відсутній, спочатку віднови залежності.
-3. Канонічна команда preview/Docker-збірки для цього репо зараз — `npm run build`, а в `package.json` вона веде на `next build --webpack`. Це зроблено саме для обходу Windows `UNC` / `outside of root directory`, який ламав Turbopack.
-4. Якщо `next build --webpack` падає на `Cannot find module '../lightningcss.win32-x64-msvc.node'`, це не проблема UI-коду. Це означає, що треба підтягнути optional native dependency.
-5. Якщо Windows `UNC`-шлях все ще ламає збирання, не міняй логіку сторінки, а змінюй середовище збірки або шлях запуску.
+3. Канонічний шлях збірки — NAS Linux через контрольну площину: `projectctl dev ensure bodyres` для DEV і `projectctl preview refresh bodyres` для публічного preview; обидва збирають на Linux у контейнері адаптера. Пряма команда збірки — `npm run build:static`. `npm run build` (`next build --webpack`) лишається обходом епохи запуску зі станції Windows, див. правило 10, і шляхом deploy він не є.
+4. Історично (запуск зі станції Windows): якщо `next build --webpack` падав на `Cannot find module '../lightningcss.win32-x64-msvc.node'`, це була не проблема UI-коду, а відсутня optional native dependency для цієї платформи.
+5. Історично (запуск зі станції Windows): `UNC`-шлях ламав збирання, тому змінювали середовище або шлях запуску. На NAS Linux ця причина зникла, і локальний обхід більше не застосовують.
 6. У BodyRes видимий шаблон лежить у `public/sharp-template/Sharp/index.html`, а не в `Vaoferi/nlm/public_html`. Не плутай ці дві поверхні.
 6.1. `public/sharp-template/Sharp/index.html` є внутрішнім документом iframe. Він не має потрапляти в sitemap, feed, `llms.txt` або SEO manifest як окрема сторінка, інакше пошуковики отримають дубль головної.
 7. Після правок у `public/sharp-template/Sharp/index.html` / `assets/css/*` / `assets/img/*` обов’язково піднімай cache-buster у `src/app/page.tsx`, інакше iframe може показувати стару версію навіть після змін на диску.
 8. Якщо змінюються аватарки відгуків, перевіряй імена файлів у `public/sharp-template/Sharp/assets/img/reviews/` та відповідність шляхів у HTML.
 9. Не тягни `Elements/` у runtime або build як live dependency. Якщо якийсь донорський файл потрібний на сайті, спочатку копіюй його в робочу теку (`public/`, `src/` або інший workspace-asset path), і вже звідти посилайся в коді.
-10. У цій сесії `next build` на Turbopack ламався на Windows `UNC` / `outside of root directory`. Робочий обхід, який уже підтвердився, - `next build --webpack` через `npm run build`.
+10. Історично (запуск зі станції Windows): `next build` на Turbopack ламався на `UNC` / `outside of root directory`, і підтвердженим обходом був `next build --webpack` через `npm run build`. На NAS Linux цього обходу не потребують.
 11. Якщо live URL на `http://nlmhelp.keenetic.link:18084/` не показує свіжі зміни після зеленої збірки, це означає, що ще не оновився окремий NAS/container runtime. У такому випадку спочатку перевіряй канал віддачі сторінки, а не знову міняй UI.
 12. Для public/sharp-template/Sharp будь-яка зміна HTML/CSS/зображень має супроводжуватися оновленням cache-buster у `src/app/page.tsx`. Без цього iframe може показувати стару версію навіть коли файли на диску вже нові.
 13. У цьому розборі live шаблон вже віддавав оновлений `public/sharp-template/Sharp/index.html`, але iframe на головній ще лишався на старому `v=...`, тому “build green” і “visible on site” треба рахувати окремо.
-14. Якщо під час build видно багато попереджень про `LF will be replaced by CRLF`, це не є блокером збірки само по собі, але воно не повинно маскувати справжні помилки `UNC/root`, `lightningcss` або runtime deployment.
-15. На Synology перед Docker build обов’язково має працювати `.dockerignore` з `**/@eaDir`, `**/@eaDir/**` і `**/*@SynoEAStream`. Інакше Next.js бачить `src/app/@eaDir` як parallel route і падає з `Missing required default.js file for parallel route at app/@eaDir`.
-16. `Elements/` є донорською текою, а не runtime dependency. Для Docker build вона має бути виключена з context через `.dockerignore`, а потрібні медіа треба копіювати в `public/` або іншу робочу теку сайту.
+14. Історично (запуск зі станції Windows): якщо під час build видно багато попереджень про `LF will be replaced by CRLF`, це не блокер збірки саме по собі, але воно не повинно маскувати справжні помилки `UNC/root`, `lightningcss` або runtime deployment. Нині репо зберігає `out/`-політику в `.gitattributes` (`* text=auto eol=lf`).
+15. `.dockerignore` на Synology має й надалі ігнорувати `**/@eaDir`, `**/@eaDir/**` і `**/*@SynoEAStream`. Інакше Next.js бачить `src/app/@eaDir` як parallel route і падає з `Missing required default.js file for parallel route at app/@eaDir`. Це правило діє для будь-якого image build; для NAS preview шляху воно актуальне тому, що `@eaDir` створює сама DSM на тій самій файловій системі.
+16. `Elements/` є донорською текою, а не runtime dependency. Вона має бути виключена з context будь-якого image build через `.dockerignore`, а потрібні медіа треба копіювати в `public/` або іншу робочу теку сайту.
 17. Доступи Hostinger зберігати тільки в локальному `.env.hostinger.local`. Цей файл має бути в `.gitignore` і `.deployignore`; у git дозволений тільки `.env.hostinger.example` без секретів.
 18. Для звичайного Hostinger hosting використовувати тільки static export (`out/`) і FTP-завантаження в `public_html`. Не додавати SSR, API routes або Node runtime для production без окремого рішення.
 19. Перед FTP-деплоєм на `body-re.store` перевіряти `.deployignore`, щоб не завантажити `.env*`, `Elements/`, `.git`, `node_modules`, `.next` або службові `@eaDir`.
@@ -44,18 +44,19 @@
    - Synology/NAS відповідає за preview/container runtime;
    - Hostinger production приймає тільки static export у `public_html`.
 35. Якщо потрібен fallback доступ до Synology, використовуй QuickConnect/DSM шлях з Vaultwarden-обліковими даними. Не записуй ці дані в `.env`, docs, git або shell snippets.
-36. На UNC/SMB static build може тривати понад 180 секунд: 2026-07-15 оптимізований build витратив близько 159 секунд ще до запуску test server. `playwright.config.ts` має чекати щонайменше 300 секунд; це тестовий timeout, не production workaround.
+36. Статичний білд не миттєвий: 2026-07-15 виміряно близько 159 секунд ще до запуску test server (тоді ще через `UNC`/SMB), 2026-09-25 повний `projectctl preview refresh bodyres` на NAS Linux зайняв 76 секунд разом із білдом, backup і заміною artifact. `playwright.config.ts` має чекати щонайменше 300 секунд; це тестовий timeout, не production workaround.
 37. Hostinger production має окремий edge/LiteSpeed cache: успішний FTP `STOR` і новий файл у `public_html` ще не доводять, що `https://body-re.store/` вже віддає нову root-сторінку. Після FTP upload обов'язково перевіряй і прямий шаблон, і `/`, а для застарілої root-сторінки виконуй `Clear cache / Purge all` у hPanel для `body-re.store`.
 38. Cache-buster оновлюється на кожному deploy-поверхні окремо: змінений `responsive.css` отримує новий query у `public/sharp-template/Sharp/index.html`, а змінений iframe path — новий query у `src/app/page.tsx`. Не вважай один оновлений `v=...` доказом, що незалежний root cache вже скинутий.
 
 ## Рекомендований порядок
 
 ```text
-1. npm install --include=optional
-2. npm run build
-3. npm run build:static
-4. npm run ci
-5. build і DEV виконуються на NAS Linux (canonical checkout), тому UNC/mapped-drive обходи `X:\` та локального клону більше не потрібні й не є підтримуваним шляхом; якщо інструмент скаржиться на шлях — це дефект NAS-адаптера, який фіксується, а не обходитьться локальним запуском
+1. projectctl dev ensure bodyres        # NAS Linux, DEV на стабільному :18084
+2. правка в canonical NAS checkout; перевірка Fast Refresh у браузері
+3. projectctl dev stop bodyres          # permanent повертається першим, DEV прибирається після
+4. projectctl preview refresh bodyres   # білд на NAS, backup, заміна вмісту artifact, health-перевірка
+5. npm run ci                           # Playwright по static export; всередині NAS-контейнера, не зі станції
+6. build і DEV виконуються на NAS Linux (canonical checkout), тому UNC/mapped-drive обходи `X:\` та локального клону більше не потрібні й не є підтримуваним шляхом; якщо інструмент скаржиться на шлях — це дефект NAS-адаптера, який фіксується, а не обходитьться локальним запуском
 6. перевірити diff і visual QA
 ```
 
