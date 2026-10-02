@@ -41,7 +41,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="uk" className={`${marcellus.variable} ${rambla.variable}`}>
-      <body className="min-h-screen overflow-hidden bg-background text-foreground antialiased">
+      {/* NLM-213: overflow-hidden тут ламав скрол звичайних сторінок (/services/, /services/[slug]/).
+          Головна не потребує його тут — вона сама є <main className="fixed inset-0 overflow-hidden">
+          з iframe, тож фіксується власним контейнером, а не body. */}
+      <body className="min-h-screen bg-background text-foreground antialiased">
         <JsonLd data={createOrganizationSchema()} />
         {children}
       </body>

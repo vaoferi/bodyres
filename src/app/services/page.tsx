@@ -16,40 +16,51 @@ export default function ServicesPage() {
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <a className={styles.brand} href="/">
-            <span aria-hidden="true" className={styles.brandMark}>BR</span>
+            <img alt="" aria-hidden="true" className={styles.brandLogo} height={44} src="/icon.svg" width={44} />
             <span>Body Restore</span>
           </a>
           <nav aria-label="Основна навігація" className={styles.nav}>
             <a href="/">Головна</a>
-            <a href="/services/">Послуги</a>
+            <a aria-current="page" href="/services/">Послуги</a>
             <a href="tel:+380968592465">Запис</a>
           </nav>
         </div>
       </header>
 
       <main className={styles.main}>
+        {/* NLM-213: eyebrow над H1 прибрано — заголовок несе власну вагу сам. */}
         <section className={styles.section}>
-          <p className={styles.eyebrow}>Body Restore · Одеса</p>
           <h1 className={styles.sectionHeading}>Послуги масажу в Одесі</h1>
           <p className={styles.lead}>
             Оберіть процедуру, про яку хочете дізнатися більше. Формат, тривалість і вартість уточнюємо під час попереднього запису — без універсальних обіцянок для всіх.
           </p>
-          <div className={styles.grid}>
+          <ul className={styles.grid}>
             {massageServices.map((service) => (
-              <article className={styles.card} key={service.slug}>
-                <img alt="" className={styles.cardImage} src={service.image} />
+              <li key={service.slug}>
+                <article className={styles.card}>
+                  <div className={styles.cardMedia}>
+                    <img alt="" className={styles.cardImage} loading="lazy" src={service.image} />
+                  </div>
                 <div className={styles.cardBody}>
                   <h2>{service.name}</h2>
                   <p>{service.shortDescription}</p>
                   <div className={styles.cardActions}>
-                    <a className={styles.textLink} href={`/services/${service.slug}/`}>
+                    <span aria-hidden="true" className={styles.cardFocus}>
+                      {service.focus[0]}
+                    </span>
+                    <span className={styles.cardCta}>
                       Детальніше
-                    </a>
+                      <svg aria-hidden="true" className={styles.cardArrow} viewBox="0 0 20 20">
+                        <path d="M4 10h11m-4.5-4.5L15 10l-4.5 4.5" />
+                      </svg>
+                    </span>
                   </div>
                 </div>
-              </article>
+                </article>
+                <a aria-label={`Детальніше: ${service.name}`} className={styles.cardLink} href={`/services/${service.slug}/`} />
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
         <section className={styles.cta}>
           <div>
