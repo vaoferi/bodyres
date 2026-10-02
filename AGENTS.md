@@ -18,8 +18,9 @@
 
 ## Session Baseline
 
-- Перед першою repository-scoped write-capable дією в сесії прочитай `.vaoferi/manifest.json`, звір version/`source_commit` з **canonical latest** `vaoferi/vaoferi-start-here` `main` через trusted source; stale baseline онови лише canonical sync mechanism, потім verify/central drift, `DEFINITION_OF_DONE.md` і `PROJECT_RULES.md`.
-- Перший видимий repo-status окремим рядком: `✅ START HERE VERIFIED — <version> @ <short SHA> · central drift: none · DoD: loaded · PROJECT_RULES: loaded`. `VERIFIED` дозволений лише після factual latest comparison + local verify.
+- Перед першою repository-scoped write-capable дією прочитай `.vaoferi/manifest.json`, звір version/`source_commit` з **canonical latest** `vaoferi/vaoferi-start-here` `main` через trusted source; stale baseline онови лише canonical sync mechanism, потім `DEFINITION_OF_DONE.md` і `PROJECT_RULES.md`.
+- Local verify доводить лише hashes/hygiene; `VERIFIED` вимагає окремого `python .vaoferi/verify.py check-central` (fresh `git ls-remote` refs/heads/main). Cached local ref не є доказом central latest.
+- Перший видимий repo-status: `✅ START HERE VERIFIED — <version> @ <short SHA> · central drift: none · DoD: loaded · PROJECT_RULES: loaded`.
 - Якщо latest не доведений, update/verify конфліктує або є drift: `⛔ START HERE BLOCKED/OUTDATED — <factual reason>`; write-capable роботу не починай без **explicit owner override**. Read-only diagnosis дозволений лише для blocker discovery.
 - Перед новою IMPLEMENTATION задачею виконай `python .vaoferi/check_worktree_clean.py` (або exact `git status --porcelain=v1 --untracked-files=all`). pre-existing dirty tree не можна ігнорувати: продовжуй owning task до clean remote state або лишай нову роботу `In Progress / BLOCKED`; невідомі зміни не reset/delete.
 
@@ -47,17 +48,24 @@
 - Version-sensitive facts перевіряй за current official/reliable source.
 - Behavior change/bug fix → **TDD**: failing test, підтверджений **RED**, мінімальний GREEN, regressions; production fix до RED не пиши, якщо test технічно можливий.
 
+## Canonical Route And Memory
+
+- Failed **canonical route** → спершу exact environment/identity/credential + Linear/docs/runtime/Hindsight. Не повторюй disproved path без доказаної **invalidating condition**; повний anti-loop contract — `MEMORY.md`.
+- Не клади в memory secrets, PII, production payloads або biometric data.
+
 ## Verification
 
 - `In Review` / `Done` потребують доказу кожного релевантного acceptance criterion і повного `DEFINITION_OF_DONE.md`.
 - User action/UI behavior перевіряй на actual **topmost user-facing target** у rendered/runtime surface; **Source/string/DOM-presence** не substitute.
-- Для UI/layout/responsive/browser змін manual browser QA = **усі affected surfaces × 10 canonical viewport states** із `DEFINITION_OF_DONE.md`; project docs можуть додати viewport-и, але не прибрати базову матрицю.
-- UI/layout/responsive зміни також потребують automated browser geometry/visibility regression gate з breakpoint boundaries та owner-reproduced edge cases; screenshot diff може доповнювати, але не замінює semantic geometry checks.
+- Verification **risk-tiered**: inner loop = focused proof; candidate = affected surfaces + owner state + affected breakpoint boundaries; full-health matrix = broad/high-risk/release або explicit project requirement.
+- UI/layout/responsive зміни все одно потребують browser QA + automated geometry/visibility proof, але scope відповідає risk tier; локальна правка не сертифікує весь продукт заново.
 - Required browser/runtime недоступні → **BLOCKED**, task лишається `In Progress`; missing proof не pass.
 - `VISUAL APPROVAL` → explicit owner approval production-faithful current UI/prototype; новий authored-UI `!important` — hard failure без exact exception.
 - Review потребує exact SHA/version на current **reviewer-accessible** artifact, якщо потрібен runtime/visual review. Stale preview, `HTTP 200`, build PASS або code presence не acceptance.
-- Запускай project-required lint/build/tests/browser checks; UI → real interactions, relevant Console/Network, required responsive/device states.
+- Якщо canonical user-facing target перемикається між temporary DEV і durable preview/staging/fallback, завантаж `vaoferi-runtime-preview`. `Done` потребує **durable promotion + exact artifact identity + monotonic acceptance frontier**. Silent fallback на старіший accepted/user-visible artifact = FAIL.
+- Після локального fix не запускай full gate ритуально: спочатку focused rerun. Unrelated/flaky failure ізолюй; reproducible чужий defect належить owning task, а не розширює поточну картку. Full-health повторюється лише коли risk tier цього вимагає.
 - Shared-surface change → повторно перевір affected regressions; broad change → inspect target diff і назви unverified gaps.
+- Якщо stable reviewer/user endpoint перестав показувати вже accepted work, це **RECOVERY MODE**: спочатку віднови latest accepted durable state; не витрачай основний цикл на другорядний hardening. Два поспіль цикли без просування acceptance frontier або нового спростування гіпотези → зупини broad exploration і зведи роботу до одного reproducible fail + одного найменшого experiment.
 
 ## Git
 
@@ -78,7 +86,7 @@
 - New/unsynced repo або missing context → `vaoferi-bootstrap`; legacy/nested/conflicting docs → `vaoferi-project-adaptation`.
 - UI/layout/responsive/components/tokens/typography/design docs → `vaoferi-design-skill`.
 - Dependencies/versions/upgrades → `vaoferi-dependencies`; secrets/auth/privacy → `vaoferi-security`; non-trivial implementation/bug/refactor/tests → `vaoferi-engineering`.
-- Task tracking/Trello migration → `vaoferi-task-tracking`; production deploy/release/rollback/origin validation → `vaoferi-deploy` (deploy fixes only DEPLOY-LAYER defects; product/UI/CI causes go to their owning task).
+- Task tracking/Trello migration → `vaoferi-task-tracking`; DEV/HMR/stable preview/staging/TTL/watchdog/artifact promotion або stale reviewer URL → **`vaoferi-runtime-preview`**; production deploy/release/rollback/origin validation → `vaoferi-deploy` (deploy fixes only DEPLOY-LAYER defects; product/UI/CI causes go to their owning task).
 - Не завантажуй specialized rules без потреби: core короткий, conditional knowledge routed.
 
 ## Task Tracking
@@ -87,3 +95,4 @@
 - Repository-scoped **implementation task** продовжуй **до повного completion loop** за `DEFINITION_OF_DONE.md` + `vaoferi-task-tracking`; не зупиняйся на partial result.
 - `Definition of Done` формулюй outcome-first, **мовою користувача**. Reviewer independently verifies: FAIL → `In Progress`; PASS без owner-only gate → `Done`; owner-only acceptance → `In Review`.
 - `Trello` — legacy input: relevant card прочитай повністю, перенеси useful work/facts у Linear/canonical sources, verify parity; після parity hard-delete або архів/close. Не створюй нових Trello cards і не веди паралельні sources of truth.
+

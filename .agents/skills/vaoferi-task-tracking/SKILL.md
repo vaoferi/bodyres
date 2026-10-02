@@ -11,6 +11,15 @@ description: Use when reading, migrating, creating, updating, or retiring work i
 
 `DEFINITION_OF_DONE.md` — обов'язковий centrally-owned completion contract для кожної repository-scoped IMPLEMENTATION задачі. Цей skill уточнює lifecycle, але не може послабити DoD.
 
+## Linear information architecture
+
+- **Project Overview** — stable README/navigation: purpose, boundaries, canonical repositories/docs, workstream/site labels and durable project-level decisions. Не вести тут денний progress log.
+- **Issues** — executable work, owner decisions and issue-specific evidence/corrections.
+- **Project Updates / Activity** — chronological material state change: release/cutover, health, project-level blocker, corrected project assumption or important risk/next step. Не засмічувати кожним test rerun.
+- **Hindsight** — sanitized experience/dead-end memory, subordinate to current sources; не task tracker і не truth.
+
+Якщо executor зробив **material correction** до раніше опублікованого висновку, не переписуй історію тихо: додай issue comment/update з correct evidence і, коли failure class може повторитися, збережи sanitized Hindsight trap/correction record за `MEMORY.md`.
+
 ## Mandatory issue modes
 
 Перед execution кожна картка має бути однозначно віднесена до одного mode. Якщо mode не вказаний у title/description/template, агент визначає його перед роботою й фіксує одним рядком у Linear.
@@ -35,9 +44,9 @@ description: Use when reading, migrating, creating, updating, or retiring work i
 2. проганяй focused regression/tests для зміненого behavior;
 3. проганяй project-required lint/typecheck/static/security gates, релевантні цьому slice;
 4. зроби build, якщо зміна впливає на buildable artifact;
-5. для UI/layout/responsive/browser змін вручну перевір **кожну affected user-facing surface × 10 canonical viewport states** з `DEFINITION_OF_DONE.md`, плюс project-specific states;
-6. для UI/layout/responsive змін проганяй automated browser geometry/visibility regression gate з breakpoint boundaries та owner-reproduced edge cases;
-7. виконай інший relevant browser/runtime verification для browser/runtime-dependent behavior;
+5. для UI/layout/responsive/browser змін застосуй **risk tier** з `DEFINITION_OF_DONE.md`: candidate = affected surfaces + owner state + affected breakpoint boundaries; full canonical matrix — тільки broad/high-risk/release;
+6. для UI/layout/responsive змін проганяй automated browser geometry/visibility regression у відповідному affected range; exhaustive sweep — лише коли цього вимагає risk tier;
+7. виконай relevant browser/runtime verification; якщо є DEV→stable/fallback topology, завантаж `vaoferi-runtime-preview`, доведи exact-SHA durable promotion + normal stop parity, а forced TTL/watchdog — тільки для lifecycle/runtime risk або explicit project requirement;
 8. перевір diff на unintended edits, secrets, generated garbage, незрозумілі untracked/modified хвости і випадкові dependency/config зміни;
 9. виправ failures, якщо вони спричинені цією карткою;
 10. commit із issue reference;
@@ -46,7 +55,7 @@ description: Use when reading, migrating, creating, updating, or retiring work i
 13. запусти `python .vaoferi/check_worktree_clean.py` і отримай `WORKTREE CLEAN: PASS`;
 14. запиши exact pushed SHA і короткий evidence handoff у Linear.
 
-IMPLEMENTATION не може бути `In Review` або `Done`, якщо її required gates, affected-surface browser matrix, automated responsive/geometry gate, build/runtime evidence, clean intended diff, commit, push або REMOTE SYNC ще попереду.
+IMPLEMENTATION не може бути `In Review` або `Done`, якщо її **risk-tier-required** gates, affected-surface browser/geometry evidence, build/runtime evidence, clean intended diff, commit, push або REMOTE SYNC ще попереду. Ordinary task не повторює full-health gate після кожної дрібної правки; після failure спочатку запускається focused owning slice.
 
 ## Failure classification before product changes
 
@@ -56,6 +65,28 @@ IMPLEMENTATION не може бути `In Review` або `Done`, якщо її r
 - **PRE-EXISTING / UNRELATED** — існувало до current diff або поза scope → не ремонтуй мовчки; створи/link follow-up, доведи що current card не погіршує стан, і не тягни цей борг у release без причини.
 - **CI / ENVIRONMENT** — missing browser/action/font/filesystem/runtime mismatch або harness problem → виправляй інфраструктуру в окремому scope; не підганяй product CSS/logic без доказу product regression.
 - **EXTERNAL** — CDN/API/provider/network → isolate/fail fast за project contract; не переписуй продукт навмання.
+
+## Acceptance frontier і anti-loop
+
+Для довгих/blocked implementation задач не вимірюй прогрес кількістю коментарів або годин. Вимірюй **зміною acceptance frontier**.
+
+Якщо task використовує runtime/preview lifecycle — frontier визначає `vaoferi-runtime-preview`. Для інших задач сформулюй аналогічні 3–7 observable milestones.
+
+Кожна невдала ітерація має дати хоча б одне:
+- frontier просунувся;
+- конкретна гіпотеза спростована новим evidence;
+- один blocker звужений до меншого reproducible fail.
+
+**Два поспіль цикли** без жодного з цих результатів = процесний FAIL. Агент зобов'язаний:
+1. припинити broad exploration;
+2. назвати один current user-visible blocker;
+3. дати одну exact reproduction;
+4. перевірити, чи не виконується stale tool/branch/artifact;
+5. зробити один найменший experiment, який може спростувати leading hypothesis.
+
+Не можна багато разів переписувати той самий blocker різними словами й називати це прогресом.
+
+Якщо already accepted user-facing result зник зі stable endpoint — перейти в RECOVERY MODE і спочатку повернути latest accepted durable state, навіть якщо ширша infrastructure card має ще десятки hardening пунктів.
 
 ## No report-and-wait default
 
@@ -86,6 +117,8 @@ IMPLEMENTATION не може бути `In Review` або `Done`, якщо її r
 - `KNOWN EXCEPTIONS: none` або explicit accepted exception
 
 Missing field/evidence для applicable gate = FAIL → задача лишається `In Progress`.
+
+Для temporary→durable runtime додатково обов'язкові: `FRONTIER: F0..F7`, exact control-plane identity, promoted artifact identity і stable target identity після teardown.
 
 DISCOVERY / INTAKE handoff:
 
@@ -208,7 +241,7 @@ For blocked work:
 
 For `In Review`:
 - first verify the executor's **pushed SHA** exists on the remote and matches the described task scope; missing/unpushed SHA = FAIL → `In Progress`;
-- verify `DEFINITION_OF_DONE.md` evidence independently, including affected-surface browser matrix and automated responsive/geometry gate when applicable;
+- verify `DEFINITION_OF_DONE.md` evidence independently, including declared risk tier, affected-surface browser matrix and automated responsive/geometry gate when applicable;
 - independent FAIL → detailed review comment + `In Progress`;
 - technical PASS but owner-only visual/business acceptance still pending → keep `In Review`, state exact owner action;
 - full PASS with no owner-only gate → `Done`.

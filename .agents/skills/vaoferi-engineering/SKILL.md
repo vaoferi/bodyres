@@ -16,6 +16,20 @@ description: Use for non-trivial implementation, bug fixes, refactors, tests, or
 7. Запусти релевантні tests/lint/build/runtime/browser checks, потім перевір diff і acceptance ledger.
 8. Поясни результат outcome-first; явно назви неперевірене.
 
+## Canonical-route stop
+
+Коли current `PROJECT_RULES.md` / ADR / runbook задає canonical route, а він не працює, **не обходь його за інерцією**.
+
+Перед alternate path:
+
+1. відтвори failure на exact host/path/tool/version і підтвердь target/worktree/artifact identity;
+2. перевір required credential names/presence через approved seams без друку values;
+3. звір current project docs і активний **Linear** decision/task;
+4. коли Hindsight доступний — recall/reflect same problem signature, failed/disproved paths та `do-not-repeat-until`;
+5. сформулюй одну leading hypothesis і зроби один **smallest experiment**, який може її спростувати.
+
+Alternate/workaround допустимий лише після доказаного blocker. Збережи evidence + причину + re-entry/invalidating condition. Раніше disproved path не повторюй без фактичної зміни цієї умови.
+
 ## Architecture And Data Flow
 
 - SOLID використовуй як захист від coupling/хаосу, а не як церемонію: interface/service/adapter потрібні лише коли реально зменшують ризик змін або полегшують тестування.
@@ -33,9 +47,20 @@ description: Use for non-trivial implementation, bug fixes, refactors, tests, or
 - `source/string/DOM-presence` assertions можуть доповнювати verification, але не замінюють реальну interaction/runtime перевірку.
 - Для UI бери viewport/device matrix з project `TESTING.md`, task acceptance або design contract; перевіряй реальні interactions, **Console/Network**, overflow/layout і relevant states.
 - Якщо required browser/runtime недоступний, не маскуй це manual/source check-ом: task лишається **In Progress/BLOCKED**.
-- Перед `In Review` exact SHA/version має бути розгорнутий на canonical **reviewer-accessible** artifact/preview, якщо task потребує visual/runtime review; stale preview не рахується.
+- Перед `In Review` exact SHA/version має бути розгорнутий на canonical **reviewer-accessible** artifact/preview, якщо task потребує visual/runtime review; stale preview не рахується. Якщо є temporary DEV→durable preview/staging/fallback lifecycle, обов'язково завантаж `vaoferi-runtime-preview`: accepted candidate має бути promoted і повторно доведений після teardown.
 - Якщо змінюється shared surface, повторно проганяй related acceptance/regression flows, що можуть бути зачеплені.
 - Якщо CI існує — не обходь його. Якщо повторювані tests/build gates є, а CI відсутній, запропонуй найменший корисний automation path замість ручного ритуалу.
+
+### Risk-tiered verification ladder
+
+Choose verification by **affected scope + risk**, not by habit:
+
+- **V1 Inner loop:** focused RED→GREEN + smallest relevant lint/type/static/browser check.
+- **V2 Candidate:** build if applicable + focused affected regressions + affected-surface browser/geometry checks, including owner repro and affected breakpoint boundaries.
+- **V3 Stable acceptance:** exact pushed SHA/version on canonical reviewer target + key affected acceptance; load `vaoferi-runtime-preview` when temporary→durable topology applies.
+- **V4 Full health:** broad project/browser matrix only for high-risk/shared/global/release work or when focused evidence expands the blast radius.
+
+Ordinary work should not exceed two full-health runs by default. A third requires a written new-risk justification. If a broad gate fails outside the affected area, isolate the owning test first; reproducible unrelated defects stay with their owning task, and timing flakes without a user-visible repro do not justify changing product behavior.
 
 ### Evidence Format
 
@@ -44,6 +69,8 @@ description: Use for non-trivial implementation, bug fixes, refactors, tests, or
 `acceptance criterion → test/interaction → environment/artifact/SHA → observed result → PASS/FAIL/BLOCKED`.
 
 “Agent says PASS” без фактичного command/browser/runtime output не є evidence.
+
+Для runtime/preview задач окремо перевіряй **control-plane identity**: який exact script/binary/service реально виконував build/promotion/stop. Green output від stale installed CLI не доводить current contract.
 
 ### Reviewer handoff
 
