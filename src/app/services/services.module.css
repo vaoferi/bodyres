@@ -193,6 +193,22 @@
   list-style: none;
 }
 
+/* NLM-213: 10 карток не мають залишати «висячий» рядок 3+3+3+1.
+   Напрям AGENTS.md: або 1+1+1…, або кожен рядок має ≥2 елементів.
+   auto-fill дає 3 колонки на широких екранах, тому вводимо 2-колонкову
+   сітку в діапазоні, де 10 карток діляться на 5 рядків по 2. */
+@media (min-width: 48rem) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 72rem) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .grid > li {
   position: relative;
   display: flex;
@@ -608,15 +624,11 @@
   }
 }
 
-/* Wide desktop: не розтягуємо картки на гігантські порожні плями. */
+/* Wide desktop: не розтягуємо контент на гігантські порожні плями. */
 @media (min-width: 90rem) {
   .headerInner,
   .main,
   .footerInner {
     width: min(100% - 4rem, 78rem);
-  }
-
-  .grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

@@ -60,3 +60,39 @@ test("головна лишається fullscreen iframe після зміни 
   expect(home.frameWidth).toBeGreaterThanOrEqual(home.viewportWidth - 1);
   expect(home.frameHeight).toBeGreaterThanOrEqual(home.viewportHeight - 1);
 });
+
+// AGENTS.md, «Правило збалансованого переносу елементів»: у групі з 10 карток
+// заборонено будь-яку схему з висячим одним елементом у рядку (3+3+3+1, 2+2+2+2+1…).
+// Дозволено або 1+1+1…, або кожен рядок має щонайменше два елементи.
+const balancedViewports = [
+  { width: 390, height: 844 },
+  { width: 768, height: 1024 },
+  { width: 1024, height: 768 },
+  { width: 1440, height: 900 },
+  { width: 2560, height: 1080 },
+];
+
+for (const viewport of balancedViewports) {
+  test(`сітка послуг не має висячого рядка на ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await page.goto("/services/");
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+
+    const rows = await page.evaluate(() => {
+      const cards = Array.from(document.querySelectorAll("main article"));
+      const tops = cards.map((card) => Math.round(card.getBoundingClientRect().top));
+      const counts = new Map<number, number>();
+      for (const top of tops) {
+        counts.set(top, (counts.get(top) ?? 0) + 1);
+      }
+      return Array.from(counts.values()).sort((a, b) => a - b);
+    });
+
+    expect(rows.reduce((sum, count) => sum + count, 0), "усі 10 карток мають бути розміщені").toBe(10);
+    const orphanRows = rows.filter((count) => count === 1);
+    expect(
+      orphanRows,
+      `розподіл по рядках: ${rows.join("+")} — не можна залишати рядок з однією карткою`,
+    ).toEqual([]);
+  });
+}
