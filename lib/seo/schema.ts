@@ -7,16 +7,30 @@ type OrganizationSchema = {
   url: string;
   logo: string;
   sameAs: string[];
+  telephone: string;
+  address: {
+    "@type": string;
+    streetAddress: string;
+    addressLocality: string;
+    addressCountry: string;
+  };
 };
 
 export function createOrganizationSchema(): OrganizationSchema {
   return {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "HealthAndBeautyBusiness",
     name: siteConfig.organizationName,
     url: siteConfig.siteUrl,
     logo: siteConfig.organizationLogo,
     sameAs: siteConfig.socialLinks,
+    telephone: siteConfig.telephone,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: siteConfig.address.streetAddress,
+      addressLocality: siteConfig.address.addressLocality,
+      addressCountry: siteConfig.address.addressCountry,
+    },
   };
 }
 

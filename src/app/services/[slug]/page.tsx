@@ -59,7 +59,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
       telephone: "+380968592465",
       address: {
         "@type": "PostalAddress",
-        streetAddress: "Фонтанська дорога, 58/3",
+        streetAddress: "вул. Івана Фунтового, 68/1",
         addressLocality: "Одеса",
         addressCountry: "UA",
       },
@@ -128,7 +128,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
-          <span>Одеса, Фонтанська дорога, 58/3</span>
+          <span>Івана Фунтового 68/1, Одеса</span>
           <a href="/services/">Усі послуги</a>
         </div>
       </footer>

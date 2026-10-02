@@ -62,10 +62,10 @@ export default function ServicesPage() {
           </div>
         </section>
       </main>
-      <footer className={styles.footer}>
-        <div className={styles.footerInner}>
-          <span>Одеса, Фонтанська дорога, 58/3</span>
-          <a href="tel:+380968592465">096 859 24 65</a>
+     <footer className={styles.footer}>
+       <div className={styles.footerInner}>
+          <span>Івана Фунтового 68/1, Одеса</span>
+         <a href="tel:+380968592465">096 859 24 65</a>
         </div>
       </footer>
     </div>

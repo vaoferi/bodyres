@@ -20,8 +20,8 @@ const facts = [
   },
   {
     label: "Адреса",
-    value: "58/3",
-    hint: "Фонтанська дорога",
+    value: "68/1",
+    hint: "Івана Фунтового",
   },
   {
     label: "Запис",
@@ -50,7 +50,7 @@ const highlights = [
   {
     icon: MapPin,
     title: "Одна зрозуміла точка",
-    text: "Одеса, Фонтанська дорога, 58/3. Без зайвих маршрутів і без порожнього місця на екрані.",
+    text: "Одеса, Івана Фунтового 68/1. Без зайвих маршрутів і без порожнього місця на екрані.",
   },
 ];
 
@@ -200,7 +200,7 @@ export default function Hero() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-foreground">
-                        Одеса, Фонтанська дорога, 58/3
+                        Івана Фунтового 68/1, Одеса
                       </p>
                       <p className="text-sm leading-6 text-muted">
                         Запис лише заздалегідь, щоб отримати персональний час без
@@ -279,7 +279,7 @@ export default function Hero() {
               Адреса
             </p>
             <p className="text-sm leading-6 text-white/[0.82]">
-              Одеса, Фонтанська дорога, 58/3
+              Івана Фунтового 68/1, Одеса
             </p>
           </div>
           <div className="space-y-1">

@@ -33,7 +33,7 @@ const socialChannels = [
 ];
 
 export default function CTA() {
-  const mapQuery = encodeURIComponent("Одеса, Фонтанська дорога, 58/3");
+  const mapQuery = encodeURIComponent("Одеса, Івана Фунтового 68/1");
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
 
   return (
@@ -143,7 +143,7 @@ export default function CTA() {
                 </div>
                 <div>
                   <p className="text-lg font-semibold text-foreground">
-                    Одеса, Фонтанська дорога, 58/3
+                    Івана Фунтового 68/1, Одеса
                   </p>
                   <p className="mt-2 text-sm leading-6 text-muted">
                     Одна точка, без зайвих маршрутів і без розмитих орієнтирів.
