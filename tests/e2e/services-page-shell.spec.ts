@@ -76,11 +76,19 @@ for (const viewport of balancedViewports) {
   test(`сітка послуг не має висячого рядка на ${viewport.width}px`, async ({ page }) => {
     await page.setViewportSize(viewport);
     await page.goto("/services/");
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    // Завершуємо вступні анімації: getBoundingClientRect() включає transform,
+    // тому під час staggered-анимації сусідні картки одного рядка давали б різні
+    // координати. offsetTop — це layout-позиція, яку transform не чіпає.
+    await page.evaluate(async () => {
+      await Promise.allSettled(
+        document.getAnimations().map((animation) => animation.finished),
+      );
+      window.scrollTo(0, document.body.scrollHeight);
+    });
 
     const rows = await page.evaluate(() => {
       const cards = Array.from(document.querySelectorAll("main article"));
-      const tops = cards.map((card) => Math.round(card.getBoundingClientRect().top));
+      const tops = cards.map((card) => Math.round(card.offsetTop));
       const counts = new Map<number, number>();
       for (const top of tops) {
         counts.set(top, (counts.get(top) ?? 0) + 1);
